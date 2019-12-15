@@ -13,4 +13,4 @@ PyJWT==1.7.1 <br>
 PyMySQL==0.9.3 <br>
 
 ### 效果展示
-
+![image](https://github.com/vanwt/cmdb/blob/master/images/demo.gif)
