@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head class="x-admin-sm">
+    <meta charset="UTF-8">
+    <title>修改信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css"/>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js?v=1"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+
+        <form class="layui-form layui-form-pane" lay-filter="form">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>主要信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="username" class="layui-form-label">
+                        <span class="x-red">*</span>账户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="username" name="username" required="" lay-verify="required"
+                               autocomplete="off" class="layui-input"></div>
+                </div>
+                <!-- system  -->
+                <div class="layui-inline">
+                    <label for="realname" class="layui-form-label">
+                        <span class="x-red">*</span>真实姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="realname" name="realname" required="" lay-verify="required"
+                               autocomplete="off" class="layui-input"></div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>其他信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="phone" class="layui-form-label">
+                        <span class="x-red">*</span>手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="phone" name="phone" autocomplete="off"
+                               class="layui-input"></div>
+                </div>
+                <!-- 账户密码  -->
+                <div class="layui-inline">
+                    <label for="email" class="layui-form-label">
+                        <span class="x-red">*</span>Email</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="email" name="email" autocomplete="off" class="layui-input"></div>
+                </div>
+            </div>
+            <div class="layui-form-item " pane>
+                <label for="remark" class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" cols="3" rows="3" id="remark" name="remark"
+                                  class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-filter="change" lay-submit="">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function getUrlquery(value) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < value.length; i++) {
+            let pair = vars[i].split("=");
+            if (pair[0] == value) {
+                return pair[1]
+            }
+        }
+        return (false);
+    }
+
+    var id = getUrlquery("key");
+    layui.use(['form', 'layer'],
+        function () {
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+            // 查询主题信息
+            $.ajax({
+                url: "/api/v1/user/" + id + "/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    //form 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                    form.val("form", {
+                        "username": result.username,
+                        "realname": result.realname,
+                        "phone": result.phone,
+                        "email": result.email,
+                        "remark": result.info,
+                    });
+                }, error: function (data) {
+                    layer.alert("获取信息失败:" + data.responseText, {icon: 2, closeBtn: 0}, function () {
+                        layer.closeAll()
+                    })
+                }
+            });
+
+            //自定义验证规则
+            form.on('submit(change)',
+                function (data) {
+                    console.log(data.field);
+                    $.ajax({
+                        url: "/api/v1/user-ac/" + id + "/",
+                        type: "put",
+                        data: data.field,
+                        success: function (result) {
+                            if (result.code === 0) {
+                                layer.alert("修改成功", {icon: 6}, function () {
+                                    // 获得frame索引
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    /* 先得到当前iframe层的索引 */
+                                    parent.layui.table.reload('users', {page: {curr: $(".layui-laypage-em").next().html()}});   //主要代码
+                                    //关闭当前frame
+                                    parent.layer.close(index); //再执行关闭
+                                });
+                            } else {
+                                layer.alert("修改失败" + result.msg, {icon: 2, closeBtn: 0})
+                            }
+                            return false;
+                        }, error: function (data) {
+                            layer.alert("修改失败" + data.responseText, {icon: 2, closeBtn: 0})
+                        }
+                    });
+                    // 关闭窗口，手动回调
+                    layer.closeAll();
+                    return false
+                });
+
+        });
+</script>
+</body>
+
+</html>

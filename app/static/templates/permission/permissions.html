@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css"/>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script src="/static/js/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        /* 禁止刷新后出现横向滚动条 */
+    </style>
+</head>
+
+<body class="x-admin-sm">
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">用户管理</a>
+                <a>
+                    <cite>权限列表</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table class="layui-table" style="overflow-y: scroll;"
+                           lay-data="{url:'/api/v1/permission/',page:true,toolbar: '#permission_button',id:'permission'}"
+                           lay-filter="roles">
+                        <thead>
+                        <tr>
+                            <th lay-data="{type:'checkbox',width:'15px'}">ID</th>
+                            <th lay-data="{field:'title',width:'15%'}">title</th>
+                            <th lay-data="{field:'url',width:'15%'}">URL</th>
+                            <th lay-data="{field:'status',width:'15%' ,templet: '#status'}">激活</th>
+                            <th lay-data="{field:'method',width:'15%'}">请求类型</th>
+                            <th lay-data="{field:'id',templet: '#buttons',width:'15%'}">动作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="status">
+    <input type="checkbox" value="{{ d.status }}" lay-skin="switch" lay-text="开|关"
+           lay-filter="status" name="{{ d.id }}" {{ d.status == true ? 'checked': ''}}>
+</script>
+<script type="text/html" id="buttons">
+    <button onclick="ChangePermission('{{ d.id }}')" class="layui-btn layui-btn-warm layui-btn-sm">修改</button>
+</script>
+<script type="text/html" id="permission_button">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" onclick="AddPermission()">添加</button>
+        <button class="layui-btn layui-btn-sm" onclick="ApiDocs()">Api文档</button>
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deletePermission">删除</button>
+    </div>
+</script>
+<script>
+    console.log(window.matchMedia("(prefers-color-scheme: dark)"));
+    //触发事件
+    layui.use(['form', 'table', 'laydate'],
+        function () {
+            var table = layui.table, form = layui.form;
+            //头工具栏事件
+            table.on('toolbar(roles)',
+                function (obj) {
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    switch (obj.event) {
+                        case 'deletePermission':
+                            var data = checkStatus.data;
+                            id_list = [];
+                            for (let i = 0; i < data.length; i++) {
+                                id_list.push(data[i].id)
+                            }
+                            DeletePermission(id_list);
+                            break;
+                    }
+                });
+            //监听指定开关
+            form.on('switch(status)', function (data) {
+                $.ajax({
+                    url: "/api/v1/permission/status/",
+                    data: {"key": this.name},
+                    success: function (result) {
+                        if (result.code === 0) {
+                            layer.msg('修改成功!');
+                        }
+                    }, error: function (data) {
+                        layer.msg('修改失败' + data.responseText);
+                    }
+                })
+            });
+            //模拟数据
+        });
+
+    function ChangePermission(id) {
+        url = '/static/templates/permission/permission-change.html?key=' + id;
+        xadmin.open('权限修改', url, 700, 666);
+    }
+
+    function DeletePermission(id_list) {
+        layer.confirm('你选中了' + id_list.length + '条数据 , 确认都要删除吗？', function () {
+            //发异步删除数据
+            $.ajax({
+                url: "/api/v1/permission/del/",
+                type: "delete",
+                data: {"ids": id_list},
+                success: function (result) {
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                    var index = parent.layer.getFrameIndex(window.name);
+                    /* 先得到当前iframe层的索引 */
+                    layui.table.reload('permission', {page: {curr: $(".layui-laypage-em").next().html()}});   //主要代码
+                    //关闭当前frame
+                }, error: function (data) {
+                    layer.msg('删除失败!' + data.responseText, {icon: 1, time: 2000});
+                }
+            });
+
+        });
+    }
+
+    function AddPermission() {
+        let url = "/static/templates/permission/permission-add.html/";
+        xadmin.open('用户修改', url, 700, 500);
+    }
+    function ApiDocs() {
+         xadmin.open('用户修改', "/docs/", 700, 700);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 10,
+  "data": [
+    {
+      "id": "10001",
+      "kefu": "梁静茹",
+      "opsuser": "黄晓明",
+      "sshuser": "root",
+      "sshpwd": "xinshang123",
+      "sshport": "22",
+      "mysql_user": "root",
+      "mysql_pwd": "xinshang123",
+      "mysql_port": "3306",
+      "ftp_port": "56330",
+      "is_pass": "通",
+      "sign": "点击此处，显示更多。当内容超出时，点击单元格会自动显示更多内容。",
+      "experience": "116",
+      "ip": "192.168.0.8",
+      "remark": "备注",
+      "createTime": "2016-10-14",
+      "idc": {
+        "id": 90,
+        "titel": "阿里云"
+      }
+    },
+    {
+      "id": "10002",
+      "kefu": "梁静茹",
+      "opsuser": "黄晓明",
+      "sshuser": "root",
+      "sshpwd": "xinshang123",
+      "sshport": "22",
+      "mysql_user": "root",
+      "mysql_pwd": "xinshang123",
+      "mysql_port": "3306",
+      "ftp_port": "56330",
+      "is_pass": "通",
+      "sign": "点击此处，显示更多。当内容超出时，点击单元格会自动显示更多内容。",
+      "experience": "116",
+      "ip": "192.168.0.8",
+      "remark": "备注",
+      "createTime": "2016-10-18",
+      "idc": {
+        "id": 90,
+        "titel": "阿里云"
+      }
+    }
+  ]
+}

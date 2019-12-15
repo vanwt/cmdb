@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+
+<head class="x-admin-sm">
+    <meta charset="UTF-8">
+    <title>修改信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css"/>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <style>
+        .layui-table-body {
+            overflow-x: hidden !important;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form layui-form-pane" lay-filter="form">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>主要信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="ip" class="layui-form-label">
+                        <span class="x-red">*</span>IP</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="ip" name="ip" required="" lay-verify="required"
+                               autocomplete="off" class="layui-input"></div>
+                </div>
+                <!-- system  -->
+                <div class="layui-inline">
+                    <label for="system" class="layui-form-label">
+                        系统类型</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="system" value="Centos7" name="system" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="asset_type" class="layui-form-label">
+                        <span class="x-red">*</span>资产类型</label>
+                    <div class="layui-input-inline">
+                        <select id="asset_type" name="asset_type" class="valid">
+                            <option value="1">物理机</option>
+                            <option value="2">虚拟机</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <!-- asset_type  -->
+                    <label for="status" class="layui-form-label">
+                        <span class="x-red">*</span>资产状态</label>
+                    <div class="layui-input-inline">
+                        <select name="status" id="status">
+                            <option value="0">下架</option>
+                            <option selected value="1">启用</option>
+                            <option value="2">故障</option>
+                            <option value="3">未使用</option>
+                            <option value="4">未知</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="sshuser" class="layui-form-label">
+                        <span class="x-red">*</span>SSH账户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sshuser" value="root" name="sshuser" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <!-- port  -->
+            </div>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>验证信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="verify_type" class="layui-form-label">
+                        <span class="x-red">*</span>验证类型</label>
+                    <div class="layui-input-inline">
+                        <select id="verify_type" name="verify_type" class="valid">
+                            <option value="0">密码</option>
+                            <option value="1">Yubico</option>
+                            <option value="2">Key</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- pwd  -->
+                <div class="layui-inline">
+                    <label for="sshpwd" class="layui-form-label">
+                        <span class="x-red">*</span>SSH密码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sshpwd" name="sshpwd" autocomplete="off" class="layui-input"></div>
+                </div>
+                <div class="layui-inline">
+                    <label for="sshyubico" class="layui-form-label">
+                        Yubico Key</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sshyubico" name="sshyubico" autocomplete="off" class="layui-input"></div>
+                </div>
+                <!-- key  -->
+                <div class="layui-inline">
+                    <label for="sshkey" class="layui-form-label">
+                        密钥Key</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sshkey" name="sshkey" autocomplete="off" class="layui-input"></div>
+                </div>
+                <div class="layui-inline">
+                    <label for="sshport" class="layui-form-label">
+                        <span class="x-red">*</span>SSH端口</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sshport" name="sshport" value="22" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>数据库信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="mysql_user" class="layui-form-label">
+                        <span class="x-red">*</span>MYSQL账户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="mysql_user" value="root" name="mysql_user" autocomplete="off"
+                               class="layui-input"></div>
+                </div>
+                <!-- 账户密码  -->
+                <div class="layui-inline">
+                    <label for="mysql_pwd" class="layui-form-label">
+                        <span class="x-red">*</span>MYSQL密码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="mysql_pwd" name="mysql_pwd" autocomplete="off" class="layui-input"></div>
+                </div>
+                <div class="layui-inline">
+                    <label for="mysql_port" class="layui-form-label">
+                        <span class="x-red">*</span>MYSQL端口</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="mysql_port" name="mysql_port" value="3306" autocomplete="off"
+                               class="layui-input"></div>
+                </div>
+                <!-- ftp port   -->
+            </div>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>其他信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="ftp_port" class="layui-form-label">
+                        FTP端口</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="ftp_port" name="ftp_port" autocomplete="off" class="layui-input"></div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>关联信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline" pane>
+                    <label for="tag" class="layui-form-label">
+                        <span class="x-red">*</span>标签</label>
+                    <div class="layui-input-inline">
+                        <select name="tag" id="tag" xm-select="tag" xm-select-skin="primary">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <!-- IDC -->
+                <div class="layui-inline">
+                    <label for="idc" class="layui-form-label">IDC机房</label>
+                    <div class="layui-input-inline">
+                        <select name="idc" id="idc" lay-search="">
+                            <option value="">-----</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="host_machine" class="layui-form-label">宿主机</label>
+                    <div class="layui-input-inline">
+                        <select name="host_machine" id="host_machine" lay-search="">
+                            <option value="">-----</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="kefu" class="layui-form-label">
+                        <span class="x-red">*</span>客服</label>
+                    <div class="layui-input-inline">
+                        <select name="kefu" id="kefu" lay-search="">
+                            <option value="">-----</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- ops  -->
+                <div class="layui-inline">
+                    <label for="opsuser" class="layui-form-label">
+                        <span class="x-red">*</span>运维</label>
+                    <div class="layui-input-inline">
+                        <select name="opsuser" id="opsuser" lay-search="">
+                            <option value="">-----</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item " pane>
+                <label for="remark" class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" cols="3" rows="3" id="remark" name="remark"
+                                  class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-filter="change" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function getUrlquery(value) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < value.length; i++) {
+            let pair = vars[i].split("=");
+            if (pair[0] == value) {
+                return pair[1]
+            }
+        }
+        return (false);
+    }
+
+    var id = getUrlquery("key");
+    layui.use(['form', 'layer'],
+        function () {
+            var formSelects = layui.formSelects;
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+            //自定义验证规则
+
+            let user_dict = {};
+            $.ajax({
+                url: "/api/v1/user/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    $.each(result, function (i, obj) {
+                        let html = '<option value="' + obj.id + '">' + obj.realname + '</option>';
+                        user_dict[obj.realname] = [obj.id];
+                        $("#kefu").append(html);
+                        $("#opsuser").append(html)
+                    });
+                }, error: function (data) {
+                    layer.alert("获取用户失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+            $.ajax({
+                url: "/api/v1/tag/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    $.each(result, function (i, obj) {
+                        let html = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $("#tag").append(html);
+                        formSelects.render()
+                    });
+                }, error: function (data) {
+                    layer.alert("获取标签失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+            let idc_dict = {};
+            $.ajax({
+                url: "/api/v1/idc/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    $.each(result, function (i, obj) {
+                        let html = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        idc_dict[obj.name] = obj.id;
+                        $("#idc").append(html);
+                    });
+                }, error: function (data) {
+                    layer.alert("获取机房失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+            let ip_dict = {};
+            $.ajax({
+                url: "/api/v1/assets/?type=1",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    $.each(result.data, function (i, obj) {
+                        ip_dict[obj.ip] = obj.id;
+                        let html = '<option value="' + obj.id + '">' + obj.ip + '</option>';
+                        $("#host_machine").append(html);
+                    });
+                }, error: function (data) {
+                    layer.alert("获取宿主机失败失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+            form.render();
+
+            // 获取单个资产信息
+            $.ajax({
+                url: "/api/v1/assets/" + id + "/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    let verify_types = {"password": 0, "yubico": 1, "key": 2};
+                    let status = {"下架": 0, "启用": 1, "故障": 2, "未使用": 3, "未知": 4};
+                    let asset_type = {"物理机": 1, "虚拟机": 2};
+                    //form 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                    console.log(result.ip, result.idc, result.opsuser);
+                    console.log(result)
+                    form.val("form", {
+                        "ip": result.ip,
+                        "asset_type": asset_type[result.asset_type],
+                        "status": status[result.status],
+                        "system": result.system,
+                        "verify_type": verify_types[result.verify_type],
+                        "sshuser": result.sshuser,
+                        "sshpwd": result.sshpwd,
+                        "sshport": result.sshport,
+                        "mysql_user": result.mysql_user,
+                        "mysql_pwd": result.mysql_pwd,
+                        "mysql_port": result.mysql_port,
+                        "ftp_port": result.ftp_port,
+                        "remark": result.remark,
+                        "host_machine": ip_dict[result.host_machine],
+                        "idc": result.idc,
+                        "opsuser": user_dict[result.opsuser],
+                        "kefu": user_dict[result.kefu],
+                    });
+                    formSelects.value('tag', make_tags(result.tags));
+                }, error: function (data) {
+                    layer.alert("获取信息失败:" + data.responseText, {icon: 2, closeBtn: 0}, function () {
+                        layer.closeAll()
+                    });
+                    return false
+                }
+            });
+
+            function make_tags(tags) {
+                s = [[1, "运维"], [2, "测试环境"]];
+
+                let tag_list = [];
+                for (let i = 0; i < tags.length; i++) {
+                    tag_list.push(tags[i][0])
+
+                }
+                return tag_list
+            }
+
+            //监听提交
+            form.on('submit(change)',
+                function (data) {
+                    console.log("走了", id);
+                    $.ajax({
+                        url: "/api/v1/assets/asset/" + id + "/",
+                        type: "put",
+                        data: data.field,
+                        success: function (result) {
+                            if (result.code === 0) {
+                                layer.alert("编辑成功", {icon: 6}, function () {
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    /* 先得到当前iframe层的索引 */
+                                    parent.layui.table.reload('assets', {page: {curr: $(".layui-laypage-em").next().html()}});   //主要代码
+                                    //关闭当前frame
+                                    parent.layer.close(index); //再执行关闭
+
+                                });
+                            } else {
+                                layer.alert("编辑失败" + data.responseText, {icon: 2, closeBtn: 0})
+                            }
+                            return false;
+                        }, error: function (data) {
+                            layer.alert("编辑失败" + data.responseText, {icon: 2, closeBtn: 0})
+                        }
+                    });
+                    return false
+                });
+
+        })
+    ;
+</script>
+</body>
+
+</html>

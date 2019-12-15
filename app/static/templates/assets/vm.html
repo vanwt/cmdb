@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head class="x-admin-sm">
+    <meta charset="UTF-8">
+    <title>虚拟机</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css"/>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script src="/static/js/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        .layui-table-body {
+            overflow-x: hidden !important;
+        }
+
+        /* 禁止刷新后出现横向滚动条 */
+    </style>
+</head>
+
+<body>
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">资产管理</a>
+                <a>
+                    <cite>虚拟机</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-inline">
+                            <input class="layui-input" autocomplete="off" placeholder="开始日" name="start" id="start"
+                                   style="width: 120px;">
+                        </div>
+                        <div class="layui-inline layui-show-xs-inline">
+                            <input class="layui-input" autocomplete="off" placeholder="截止日" name="end" id="end"
+                                   style="width: 120px;"></div>
+                        <div class="layui-inline layui-show-xs-block" style="width: 140px;">
+                            <select name="field" id="field" lay-search="">
+                                <option value="ip" selected>主机匹配</option>
+                                <option value="sshuser">SSH User</option>
+                                <option value="mysql_user">MYSQL USER</option>
+                                <option value="mysql_port">MYSQL PORT</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="检索数据" name="value" id="value">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="tags" id="tags" xm-select="tag" xm-select-skin="primary"
+                                    xm-select-skin="normal">
+                                <option value="">标签选择</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-inline" style="width: 120px;">
+                            <select name="kefu" id="kefu" lay-search="">
+                                <option value="">客服人员</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block" style="width: 120px;">
+                            <select name="opsuser" id="opsuser" lay-search="">
+                                <option value="">运维人员</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" type="reset">清空</button>
+                            <button class="layui-btn" lay-submit="" lay-filter="sreach">
+                                <i class="layui-icon">&#xe615;</i></button>
+                        </div>
+                    </form>
+                    <table class="layui-table" style="overflow-y: scroll;"
+                           lay-data="{url:'/api/v1/assets/?type=2',page:true,toolbar: '#assets_buttons',id:'assets'}"
+                           lay-filter="assets">
+                        <thead>
+                        <tr>
+                            <th lay-data="{type:'checkbox',width:'3%'}">ID</th>
+                            <th lay-data="{field:'ip',width:'15%', sort: true}">IP</th>
+                            <th lay-data="{field:'asset_type', sort: true}">资产类型</th>
+                            <th lay-data="{field:'status', sort: true}">状态</th>
+                            <th lay-data="{field:'host_machine'}">宿主机</th>
+                            <th lay-data="{field:'kefu'}">客服</th>
+                            <th lay-data="{field:'opsuser'}">运维</th>
+                            <th lay-data="{field:'idc_name'}">机房</th>
+                            <th lay-data="{field:'tags'}">标签</th>
+                            <th lay-data="{field:'create_time',width:'10%', sort: true}">创建时间</th>
+                            <th lay-data="{field:'ip', width: 200, templet: '#buttons'}">动作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="buttons">
+    <button onclick="setTop('{{ d.id }}','{{ d.ip }}')" class="layui-btn layui-btn-normal layui-btn-sm">详情</button>
+</script>
+<script type="text/html" id="assets_buttons">
+    <div class="layui-btn-container">
+        <!-- <button class="layui-btn layui-btn-sm" lay-event="getCheckData"> 获取选中行数据</button>
+          <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button> -->
+        <button class="layui-btn layui-btn-sm"
+                onclick="xadmin.open('添加资产','/static/templates/assets/asset-add.html?v=2',1400,800,)">
+            添加资产
+        </button>
+        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="changeAsset">
+            修改资产
+        </button>
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deleteAssets">删除资产</button>
+
+    </div>
+</script>
+<script>
+
+    //触发事件
+    layui.use(['form', 'table', 'laydate'],
+        function () {
+            var table = layui.table;
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var formSelects = layui.formSelects;
+            var $ = layui.jquery;
+            var tag_dict = {};
+            $.ajax({
+                url: "/api/v1/user/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    console.log(result);
+                    $.each(result, function (i, obj) {
+                        let html = '<option value="' + obj.id + '">' + obj.realname + '</option>';
+                        $("#kefu").append(html);
+                        $("#opsuser").append(html)
+                    });
+                    form.render()
+                }, error: function (data) {
+                    layer.alert("获取用户失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+            //头工具栏事件
+            table.on('toolbar(assets)',
+                function (obj) {
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    switch (obj.event) {
+                        case 'getCheckData':
+                            var data = checkStatus.data;
+                            layer.alert(JSON.stringify(data));
+                            break;
+                        case 'getCheckLength':
+                            var data = checkStatus.data;
+                            layer.msg('选中了：' + data.length + ' 个');
+                            break;
+                        case 'changeAsset':
+                            var data = checkStatus.data;
+                            if (data.length === 0 || data.length > 1) {
+                                layer.msg('请选择一条数据！');
+                                break;
+                            } else {
+                                ChangeAssets(data);
+                                break;
+                            }
+                        case 'deleteAssets':
+                            var data = checkStatus.data;
+                            id_list = [];
+                            for (let i = 0; i < data.length; i++) {
+                                id_list.push(data[i].id)
+                            }
+                            DeleteAssets(id_list);
+                            break;
+                    }
+                });
+            form.on('submit(sreach)',
+                function (data) {
+                    console.log(data.field);
+                    var url = "/api/v1/assets/?type=2";
+                    if (data.field.start) {
+                        url += "&start=" + data.field.start
+                    }
+                    if (data.field.end) {
+                        url += "&end=" + data.field.end
+                    }
+                    if (data.field.field) {
+                        url += "&" + data.field.field + "=" + data.field.value
+                    }
+                    if (data.field.tags) {
+                        console.log(data.field.tags);
+                        url += "&tags=" + data.field.tags
+                    }
+                    if (data.field.opsuser) {
+                        url += "&opsuser=" + data.field.opsuser
+                    }
+                    if (data.field.kefu) {
+                        url += "&kefu=" + data.field.kefu
+                    }
+                    form.render();
+                    table.reload("assets", {
+                        url: url,
+                        page: false,
+                        limit: 1000,
+                        unresize: false, //禁止拖拽td框，默认为false可拖拽
+                    });
+                    return false
+                });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+            // 加载 标签
+            $.ajax({
+                url: "/api/v1/tag/",
+                type: "get",
+                async: false,
+                success: function (result) {
+                    $.each(result, function (i, obj) {
+                        let html = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        tag_dict[obj.name] = obj.id;
+                        $("#tags").append(html);
+                    });
+                    formSelects.render();
+                }, error: function (data) {
+                    layer.alert("获取标签失败:" + data.responseText, {icon: 2, closeBtn: 0})
+                }
+            });
+        });
+
+    function ChangeAssets(data) {
+        url = '/static/templates/assets/asset-change.html?v=3&key=' + data[0].id;
+        xadmin.open('资产变更', url, 1400, 850);
+    }
+
+    function DeleteAssets(id_list) {
+        layer.confirm('你选中了' + id_list.length + '条数据 , 确认都要删除吗？', function () {
+            //发异步删除数据
+            $.ajax({
+                url: "/api/v1/assets/asset/",
+                type: "delete",
+                data: {"ids": id_list},
+                success: function (result) {
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                    var index = parent.layer.getFrameIndex(window.name);
+                    /* 先得到当前iframe层的索引 */
+                    layui.table.reload('assets', {page: {curr: $(".layui-laypage-em").next().html()}});   //主要代码
+                    //关闭当前frame
+                }, error: function (data) {
+                    layer.msg('删除失败!' + data.responseText, {icon: 1, time: 2000});
+                }
+            });
+
+        });
+    }
+
+    //查看详情
+    function setTop(id, ip) {
+        //多窗口模式，层叠置顶
+        parent.xadmin.add_tab(ip, '/static/templates/assets/asset-info.html?v=1&key=' + id);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head class="x-admin-sm">
+    <meta charset="UTF-8">
+    <title>增加信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css"/>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js?v=1"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+
+        <form class="layui-form layui-form-pane" lay-filter="form">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>主要信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="title" class="layui-form-label">
+                        <span class="x-red">*</span>权限名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="title" name="title" required="" lay-verify="required"
+                               autocomplete="off" class="layui-input"></div>
+                </div>
+                <!-- system  -->
+                <div class="layui-inline">
+                    <label for="url" class="layui-form-label">
+                        <span class="x-red">*</span>URL</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="url" name="url" required="" lay-verify="required"
+                               autocomplete="off" class="layui-input"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="method" class="layui-form-label">
+                        <span class="x-red">*</span>请求类型</label>
+                    <div class="layui-input-inline">
+                        <select id="method" name="method" class="valid">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="ALL">ALL</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-filter="change" lay-submit="">添加</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function getUrlquery(value) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < value.length; i++) {
+            if (vars[i]) {
+                let pair = vars[i].split("=");
+                if (pair[0] == value) {
+                    return pair[1]
+                }
+            }
+        }
+        return (false);
+    }
+
+    var id = getUrlquery("key");
+    if (id) {
+        layui.use(['form', 'layer'],
+            function () {
+                $ = layui.jquery;
+                var form = layui.form,
+                    layer = layui.layer;
+                let title = undefined;
+                let url = method = title = undefined;
+                $.ajax({
+                    url: "/api/v1/permission/" + id + "/",
+                    type: "get",
+                    async: false,
+                    success: function (result) {
+                        if (result) {
+                            console.log(result)
+                            title = result.title;
+                            url = result.url;
+                            method = result.method
+
+                        } else {
+                            layer.alert("获取信息失败:" + data.responseText, {icon: 2, closeBtn: 0}, function () {
+                                layer.closeAll()
+                            })
+                            return false
+                        }
+                    }
+                });
+
+                if (title) {
+                    console.log(title, method, url);
+                    form.val("form", {
+                        "title": title,
+                        "url": url,
+                        "method": method
+                    })
+                    //自定义验证规则
+                }
+                form.on('submit(change)',
+                    function (data) {
+                        data = data.field;
+                        console.log(data);
+                        $.ajax({
+                            url: "/api/v1/permission/change/" + id + "/",
+                            type: "put",
+                            data: data,
+                            success: function (result) {
+                                console.log(result);
+                                if (result.code === 0) {
+                                    layer.alert("修改成功", {icon: 6}, function () {
+                                        // 获得frame索引
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        /* 先得到当前iframe层的索引 */
+                                        parent.layui.table.reload('permission', {page: {curr: $(".layui-laypage-em").next().html()}});   //主要代码
+                                        //关闭当前frame
+                                        parent.layer.close(index); //再执行关闭
+                                    });
+                                } else {
+                                    layer.alert("修改失败" + result.msg, {icon: 2, closeBtn: 0})
+                                }
+                                return false;
+                            }, error: function (data) {
+                                layer.alert("修改失败" + data.responseText, {icon: 2, closeBtn: 0})
+                            }
+                        });
+                        // 关闭窗口，手动回调
+                        layer.closeAll();
+                        return false
+                    });
+            }
+        )
+    } else {
+        layer.alert("打开失败,无效的id", {icon: 2, closeBtn: 0})
+    }
+</script>
+</body>
+
+</html>
